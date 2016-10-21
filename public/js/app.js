@@ -6,10 +6,11 @@ socket.on('connect', () => {
 
 // Called everytime a message is received
 socket.on('message', (message) => {
+  var momentTimestamp = moment.utc(message.timestamp).local().format("h:mma");
   console.log('New Message: ' + message.text);
 
   // to target class you use a period
-  jQuery('.messages').append(`<p>${message.text}</p>`);
+  jQuery('.messages').append(`<p><strong>${momentTimestamp}:</strong> ${message.text}</p>`);
 });
 
 // Handle submitting of new message
