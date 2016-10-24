@@ -7,6 +7,12 @@ jQuery('.room-title').text(room);
 
 socket.on('connect', () => {
   console.log('Connected to Socket.io Server');
+
+  // right after the user connects, they emit a custom event to the server saying they want to join a room
+  socket.emit('joinRoom', {
+    name,
+    room
+  });
 });
 
 // Called everytime a message is received
