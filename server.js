@@ -12,6 +12,29 @@ app.use(express.static(__dirname + '/public'));
 //using to save client info so we can look up the data later
 var clientInfo = {};
 
+// Sends current users to provided Socket
+function sendCurrentUsers(socket) {
+  var info = clientInfo[socket.id];
+  var users = [];
+
+  if (typeof info === 'undefined') return;
+
+  Object.keys(clientInfo).forEach((socketId) => {
+    var userInfo = clientInfo[socketId];
+
+    if (info.room === userInfo.room) {
+      users.push(userInfo.name);
+    };
+  });
+
+  socket.emit('message', {
+    name: 'System',
+    text: `Current users: ${users.join(', ')}`,
+    timestamp: moment().valueOf()
+  });
+
+};
+
 // on lets us listen for events ('name of event', when the event happens, run callback)
 io.on('connection', (socket) => {
   console.log('User connected via socket.io');
@@ -44,8 +67,13 @@ io.on('connection', (socket) => {
   socket.on('message', (message) => {
     console.log('Message received: ' + message.text);
 
-    message.timestamp = moment().valueOf();
-    io.to(clientInfo[socket.id].room).emit('message', message); //only emits message to people who are in the same room as the current user
+    if (message.text === '@currentUsers') {
+      sendCurrentUsers(socket);
+    } else {
+      message.timestamp = moment().valueOf();
+      //only emits message to people who are in the same room as the current user
+      io.to(clientInfo[socket.id].room).emit('message', message);
+    };
   });
 
   socket.emit('message', {
