@@ -1,4 +1,4 @@
-var name = getQueryVariable('name');
+var name = getQueryVariable('name') || 'Anonymous';
 var room = getQueryVariable('room');
 var socket = io();
 
@@ -14,7 +14,8 @@ socket.on('message', (message) => {
   console.log('New Message: ' + message.text);
 
   // to target class you use a period
-  jQuery('.messages').append(`<p><strong>${momentTimestamp}:</strong> ${message.text}</p>`);
+  jQuery('.messages')
+    .append(`<p><strong>${message.name} ${momentTimestamp}:</strong></p><p>${message.text}</p>`);
 });
 
 // Handle submitting of new message
@@ -26,6 +27,7 @@ $form.on('submit', (event) => { // built in browser event is called submit
   var $message = $form.find('input[name=message]');
 
   socket.emit('message', {
+    name,
     text: $message.val()
   });
 
