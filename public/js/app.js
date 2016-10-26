@@ -21,8 +21,9 @@ socket.on('message', (message) => {
   console.log('New Message: ' + message.text);
 
   // to target class you use a period
+  //NEED TO FIX THIS. THERE IS A PERIOD SHOWING BETWEEN EACH. 
   jQuery('.messages')
-    .append(`<p><strong>${message.name} ${momentTimestamp}:</strong></p><p>${message.text}</p>`);
+    .append(`<li class="list-group-item"><strong>${message.name} </strong>${momentTimestamp}:<p>${message.text}</p><li>`);
 });
 
 // Handle submitting of new message
